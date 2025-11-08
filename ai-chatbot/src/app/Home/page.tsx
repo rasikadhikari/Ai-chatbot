@@ -1,6 +1,8 @@
+"use client";
 import { Smoke } from "@/components/ui/shadcn-io/smoke";
 import { Button } from "@/components/ui/button";
 import Pricing from "@/components/ui/pricing/page";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   return (
