@@ -3,7 +3,7 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { NextResponse } from "next/server";
 import { initialMessage } from "@/lib/initial-message";
 
-export const runtime = "edge";
+// export const runtime = "edge";
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_API_KEY || "",
