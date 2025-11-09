@@ -1,30 +1,35 @@
+import { streamText } from "ai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { NextResponse } from "next/server";
+import { initialMessage } from "@/lib/initial-message"; // optional system prompt
+
+const openai = createOpenAI({
+  apiKey: process.env.OPENAI_API_KEY || "",
+});
+
+export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
-    const { message } = await req.json();
+    const { messages } = await req.json();
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [
-          { role: "system", content: "You are a helpful assistant." },
-          { role: "user", content: message },
-        ],
-      }),
+    console.log("API Key exists:", !!process.env.OPENAI_API_KEY);
+    console.log("API Key length:", process.env.OPENAI_API_KEY?.length);
+    console.log("Received messages:", messages);
+    console.log("Initial message:", initialMessage);
+
+    const stream = streamText({
+      model: openai("gpt-4o-mini"),
+      messages: [initialMessage, ...messages],
+      temperature: 0.9,
     });
 
-    const data = await response.json();
-    return NextResponse.json({ reply: data.choices[0].message.content });
+    console.log("Stream created successfully");
+    return stream.toTextStreamResponse();
   } catch (error) {
-    console.error(error);
+    console.error("OpenAI API Error:", error);
     return NextResponse.json(
-      { error: "Failed to fetch OpenAI response" },
+      { error: "Failed to connect to OpenAI", details: String(error) },
       { status: 500 }
     );
   }
