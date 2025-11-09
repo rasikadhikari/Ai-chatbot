@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@repo/shadcn-ui/*": ["./src/components/ui/shadcn-io/*"]
     }
   },
   "include": [
